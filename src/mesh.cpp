@@ -9,7 +9,8 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
     vbo(0),
     ebo(0),
 	velocity(0,0,0),
-	acceleration(0,0,0) {
+	acceleration(0,0,0),
+	isFixed(false) {
   // setup vertices and indices
   if (mesh_primitive == MeshPrimitiveType::cube) {
     vertices = {
@@ -146,6 +147,19 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
       indices.emplace_back(UVec3(index.x + index_start, index.y + index_start, index.z + index_start));
     }
   }
+  else if (mesh_primitive == MeshPrimitiveType::rectangle) {
+	vertices = {
+		MeshVertex(Vec3(-0.5, 0, -0.5), Vec3( 0.0,  1.0,  0.0), Vec2(0.0, 1.0)),
+		MeshVertex(Vec3( 0.5, 0, -0.5), Vec3( 0.0,  1.0,  0.0), Vec2(1.0, 1.0)),
+		MeshVertex(Vec3( 0.5, 0,  0.5), Vec3( 0.0,  1.0,  0.0), Vec2(1.0, 0.0)),
+		MeshVertex(Vec3( 0.5, 0,  0.5), Vec3( 0.0,  1.0,  0.0), Vec2(1.0, 0.0)),
+		MeshVertex(Vec3(-0.5, 0,  0.5), Vec3( 0.0,  1.0,  0.0), Vec2(0.0, 0.0)),
+		MeshVertex(Vec3(-0.5, 0, -0.5), Vec3( 0.0,  1.0,  0.0), Vec2(0.0, 1.0)),
+	};
+	indices = {
+		UVec3( 0,  1,  2), UVec3( 3,  4,  5),
+	};
+  }
   else {
     std::cerr << "Mesh::Mesh(): Invalid mesh primitive" << std::endl;
     abort();
@@ -261,9 +275,15 @@ void Mesh::ApplyTransform(Transform transform){
 }
 
 void Mesh::Simulate(){
+	if(isFixed)return;
 	acceleration=-gravity;
 	velocity+=acceleration*simulation_delta_time;
 	ApplyTransform(Transform(velocity*simulation_delta_time,
                              Quat(1, 0, 0, 0),
                              Vec3(1, 1, 1)));
+}
+
+// phi - signed distance, position and normal of collision point
+void Mesh::CollisionResponse(Float phi, Vec3 position, Vec3 normal){
+	
 }

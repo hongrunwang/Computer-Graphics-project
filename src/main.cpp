@@ -52,7 +52,7 @@ int main() {
 
     // scene
     Scene scene(45);
-    scene.camera.transform.position = { 0, -1.5, -6 };
+    scene.camera.transform.position = { 0, 2.5, -10 };
     scene.camera.transform.rotation = { 0, 0, 1, 0 };
     scene.light_position = { 0, 3, -10 };
     scene.light_color = Vec3(1, 1, 1) * Float(1.125);
@@ -60,24 +60,38 @@ int main() {
     // mesh primitives
     auto mesh_cube = std::make_shared<Mesh>(MeshPrimitiveType::cube);
     auto mesh_sphere = std::make_shared<Mesh>(MeshPrimitiveType::sphere);
+    auto mesh_ground = std::make_shared<Mesh>(MeshPrimitiveType::rectangle);
+    auto mesh_wall = std::make_shared<Mesh>(MeshPrimitiveType::rectangle);
 
-	mesh_cube->ApplyTransform(Transform(Vec3(-3.5, -1.8, 0.3),
+	mesh_cube->ApplyTransform(Transform(Vec3(-3.5, 2, 0.3),
                               Quat(1, 0, 0, 0),
                               Vec3(1, 1, 1)));
 	mesh_cube->BufferMeshVertices();
-	mesh_sphere->ApplyTransform(Transform(Vec3(3.5, -1.8, 0.3),
+	mesh_sphere->ApplyTransform(Transform(Vec3(3.5, 2, 0.3),
                                 Quat(1, 0, 0, 0),
                                 Vec3(1, 1, 1)));
 	mesh_sphere->BufferMeshVertices();
+	mesh_ground->ApplyTransform(Transform(Vec3(0, 0, 0),
+                                Quat(1, 0, 0, 0),
+                                Vec3(100, 1, 100)));
+	mesh_ground->BufferMeshVertices();
+	mesh_ground->isFixed=true;
+	mesh_wall->ApplyTransform(Transform(Vec3(0, 50, 50),
+                                Quat(1.0f/sqrt(2), 1.0f/sqrt(2), 0, 0),
+                                Vec3(100, 1, 100)));
+	mesh_wall->BufferMeshVertices();
+	mesh_wall->isFixed=true;
 
 
     // objects
-    auto object_cube = scene.AddObject(mesh_cube,
-                                       Shader::shader_phong);
-    auto object_sphere = scene.AddObject(mesh_sphere,
-                                         Shader::shader_phong);
+    auto object_cube = scene.AddObject(mesh_cube, Shader::shader_phong);
+    auto object_sphere = scene.AddObject(mesh_sphere, Shader::shader_phong);
+	auto object_ground = scene.AddObject(mesh_ground, Shader::shader_phong);
+	auto object_wall = scene.AddObject(mesh_wall, Shader::shader_phong);
     object_cube->color = { Float(0.75), one, zero };
     object_sphere->color = { one, Float(0.75), zero };
+    object_ground->color = { zero, Float(0.75), one };
+    object_wall->color = { zero, Float(0.75), one };
 
     // loop until the user closes the window
     Input::Start(window);

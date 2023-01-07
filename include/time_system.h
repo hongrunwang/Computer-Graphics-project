@@ -4,7 +4,7 @@
 
 class Time {
  public:
-  static constexpr Float fixed_delta_time = Float(0.02);
+  static constexpr Float fixed_delta_time = fixed_delta_time;
 
   static Float delta_time;
   static Float elapsed_time;

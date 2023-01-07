@@ -21,8 +21,9 @@ class Object final {
   Object& operator=(Object&&) = default;
   ~Object() = default;
 
-  void FixedUpdate() const;
-  void ApplyTransform(Transform transform) const;
-  void BufferMeshVertices() const;
-  void Simulate() const;
+	// these should not be used for simplicity
+	void FixedUpdate() const;
+	void ApplyTransform(Transform transform) const;
+	void BufferMeshVertices() const;
+	void Simulate() const;
 };

@@ -6,6 +6,7 @@
 enum class MeshPrimitiveType {
   cube,
   sphere,
+  rectangle,
   invalid,
 };
 
@@ -48,10 +49,12 @@ class Mesh {
   void DrawTriangles() const;
 
   virtual void FixedUpdate();
-  
+
+	bool isFixed;
 	void ApplyTransform(Transform transform); // apply transform on each vertice
 	void BufferMeshVertices(); // rebuffer vertices into GPU
 	void Simulate(); // Simulate 1 step=fixed_delta_time
+	void CollisionResponse(Float phi, Vec3 position, Vec3 normal); // respond to a collision
 
  protected:
   enum class DrawMode { arrays, elements };

@@ -30,11 +30,11 @@ void Scene::Update() {
 void Scene::FixedUpdate() {
 	for(unsigned i=0;i<simulation_steps_per_fixed_update_time;i++){
 		for (auto& object : objects){
-			object->Simulate();
+			object->mesh->Simulate();
 		}
 	}
 	for (auto& object : objects){
-		object->BufferMeshVertices();
+		object->mesh->BufferMeshVertices();
 	}
 }
 
