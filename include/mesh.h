@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "transform.h"
 
 enum class MeshPrimitiveType {
   cube,
@@ -47,6 +48,8 @@ class Mesh {
   void DrawTriangles() const;
 
   virtual void FixedUpdate();
+  
+	void ApplyTransform(Transform transform); // apply transform on each vertice
 
  protected:
   enum class DrawMode { arrays, elements };
@@ -68,4 +71,6 @@ class Mesh {
   void SetObject(const std::shared_ptr<Object>& new_object);
 
   friend class Scene;
+
+	void BufferMeshVertices(); // rebuffer vertices into GPU
 };

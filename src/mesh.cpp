@@ -239,3 +239,18 @@ void Mesh::DrawTriangles() const {
 }
 
 /*virtual*/ void Mesh::FixedUpdate() { }
+
+void Mesh::BufferMeshVertices() {
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(MeshVertex) * vertices.size(), vertices.data(), buffer_data_usage_vbo);
+	glBindVertexArray(0);
+}
+
+void Mesh::ApplyTransform(Transform transform){
+	for(int i=0;i<vertices.size();i++){
+		vertices[i].position=transform.TransformPoint(vertices[i].position);
+		vertices[i].normal=Transform::TransformPoint(vertices[i].normal, transform.RotationMat());
+	}
+	BufferMeshVertices();
+}

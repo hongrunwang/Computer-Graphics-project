@@ -36,8 +36,6 @@ class Transform;
 class Camera;
 // scene
 class Scene;
-// cloth
-class RectCloth;
 
 
 

@@ -1,4 +1,3 @@
-#include "cloth.h"
 #include "scene.h"
 
 int main() {
@@ -8,16 +7,6 @@ int main() {
   // window
   constexpr int window_width = 1920;
   constexpr int window_height = 1080;
-
-  // cloth
-  constexpr Float cloth_weight = Float(2);
-  constexpr UVec2 mass_dim = { 40, 30 };
-  constexpr Float dx_local = Float(0.1);
-  constexpr Float stiffness = Float(15);
-  constexpr Float damping_ratio = Float(0.0015);
-  std::vector<IVec2> fixed_masses { { 0, -1 }, { -1, -1 } };
-
-
 
   /// setup window
   GLFWwindow* window;
@@ -68,37 +57,24 @@ int main() {
     scene.light_position = { 0, 3, -10 };
     scene.light_color = Vec3(1, 1, 1) * Float(1.125);
 
-    // clothes
-    auto cloth = std::make_shared<RectCloth>(cloth_weight,
-                                             mass_dim,
-                                             dx_local,
-                                             stiffness, damping_ratio);
-    for (const auto& fixed_mass : fixed_masses) {
-      if (!cloth->SetMassFixedOrNot(fixed_mass.x, fixed_mass.y, true))
-        abort();
-    }
-
     // mesh primitives
     auto mesh_cube = std::make_shared<Mesh>(MeshPrimitiveType::cube);
     auto mesh_sphere = std::make_shared<Mesh>(MeshPrimitiveType::sphere);
 
+	mesh_cube->ApplyTransform(Transform(Vec3(-3.5, -1.8, 0.3),
+                              Quat(1, 0, 0, 0),
+                              Vec3(1, 1, 1)));
+	mesh_sphere->ApplyTransform(Transform(Vec3(3.5, -1.8, 0.3),
+                             Quat(1, 0, 0, 0),
+                             Vec3(1, 1, 1)));
+
     // objects
-    auto object_cloth = scene.AddObject(cloth,
-                                        Shader::shader_phong,
-                                        Transform(Vec3(0, 0, 0),
-                                                  glm::quat_cast(glm::rotate(Mat4(Float(1.0)), glm::radians(Float(60)), Vec3(1, 0, 0))),
-                                                  Vec3(1, 1, 1)));
     auto object_cube = scene.AddObject(mesh_cube,
                                        Shader::shader_phong,
-                                       Transform(Vec3(-3.5, -1.8, 0.3),
-                                                 Quat(1, 0, 0, 0),
-                                                 Vec3(1, 1, 1)));
+                                       Transform());
     auto object_sphere = scene.AddObject(mesh_sphere,
                                          Shader::shader_phong,
-                                         Transform(Vec3(3.5, -1.8, 0.3),
-                                                   Quat(1, 0, 0, 0),
-                                                   Vec3(1, 1, 1)));
-    object_cloth->color = { zero, Float(0.75), one };
+                                         Transform());
     object_cube->color = { Float(0.75), one, zero };
     object_sphere->color = { one, Float(0.75), zero };
 

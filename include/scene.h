@@ -1,7 +1,6 @@
 #pragma once
 
 #include "camera.h"
-#include "cloth.h"
 #include "mesh.h"
 #include "object.h"
 #include "shader.h"
