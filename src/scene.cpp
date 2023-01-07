@@ -28,8 +28,14 @@ void Scene::Update() {
 }
 
 void Scene::FixedUpdate() {
-  for (auto& object : objects)
-    object->FixedUpdate();
+	for(unsigned i=0;i<simulation_steps_per_fixed_update_time;i++){
+		for (auto& object : objects){
+			object->Simulate();
+		}
+	}
+	for (auto& object : objects){
+		object->BufferMeshVertices();
+	}
 }
 
 void Scene::RenderUpdate() {

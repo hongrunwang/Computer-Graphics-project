@@ -64,17 +64,18 @@ int main() {
 	mesh_cube->ApplyTransform(Transform(Vec3(-3.5, -1.8, 0.3),
                               Quat(1, 0, 0, 0),
                               Vec3(1, 1, 1)));
+	mesh_cube->BufferMeshVertices();
 	mesh_sphere->ApplyTransform(Transform(Vec3(3.5, -1.8, 0.3),
-                             Quat(1, 0, 0, 0),
-                             Vec3(1, 1, 1)));
+                                Quat(1, 0, 0, 0),
+                                Vec3(1, 1, 1)));
+	mesh_sphere->BufferMeshVertices();
+
 
     // objects
     auto object_cube = scene.AddObject(mesh_cube,
-                                       Shader::shader_phong,
-                                       Transform());
+                                       Shader::shader_phong);
     auto object_sphere = scene.AddObject(mesh_sphere,
-                                         Shader::shader_phong,
-                                         Transform());
+                                         Shader::shader_phong);
     object_cube->color = { Float(0.75), one, zero };
     object_sphere->color = { one, Float(0.75), zero };
 

@@ -13,7 +13,7 @@ class Object final {
          std::shared_ptr<Shader> shader);
   Object(std::shared_ptr<Mesh> mesh,
          std::shared_ptr<Shader> shader,
-         const Transform& transform);
+         const Transform& transform); // should not be used if all world coordinate
 
   Object(const Object&) = delete;
   Object(Object&&) = default;
@@ -22,4 +22,7 @@ class Object final {
   ~Object() = default;
 
   void FixedUpdate() const;
+  void ApplyTransform(Transform transform) const;
+  void BufferMeshVertices() const;
+  void Simulate() const;
 };

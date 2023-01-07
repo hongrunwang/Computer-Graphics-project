@@ -7,7 +7,9 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
     is_bidirectional(false),
     vao(0),
     vbo(0),
-    ebo(0) {
+    ebo(0),
+	velocity(0,0,0),
+	acceleration(0,0,0) {
   // setup vertices and indices
   if (mesh_primitive == MeshPrimitiveType::cube) {
     vertices = {
@@ -238,7 +240,11 @@ void Mesh::DrawTriangles() const {
   glBindVertexArray(0);
 }
 
-/*virtual*/ void Mesh::FixedUpdate() { }
+/*virtual*/ void Mesh::FixedUpdate() {
+	for(unsigned i=0;i<simulation_steps_per_fixed_update_time;i++){
+		Simulate();
+	}
+}
 
 void Mesh::BufferMeshVertices() {
 	glBindVertexArray(vao);
@@ -252,5 +258,12 @@ void Mesh::ApplyTransform(Transform transform){
 		vertices[i].position=transform.TransformPoint(vertices[i].position);
 		vertices[i].normal=Transform::TransformPoint(vertices[i].normal, transform.RotationMat());
 	}
-	BufferMeshVertices();
+}
+
+void Mesh::Simulate(){
+	acceleration=-gravity;
+	velocity+=acceleration*simulation_delta_time;
+	ApplyTransform(Transform(velocity*simulation_delta_time,
+                             Quat(1, 0, 0, 0),
+                             Vec3(1, 1, 1)));
 }

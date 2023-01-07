@@ -50,6 +50,8 @@ class Mesh {
   virtual void FixedUpdate();
   
 	void ApplyTransform(Transform transform); // apply transform on each vertice
+	void BufferMeshVertices(); // rebuffer vertices into GPU
+	void Simulate(); // Simulate 1 step=fixed_delta_time
 
  protected:
   enum class DrawMode { arrays, elements };
@@ -59,6 +61,11 @@ class Mesh {
   DrawMode draw_mode;
   std::vector<MeshVertex> vertices;
   std::vector<UVec3> indices;
+
+	// Simulation
+	Vec3 velocity;
+	Vec3 acceleration;
+
   GLenum buffer_data_usage_vbo;
   GLenum buffer_data_usage_ebo;
 
@@ -71,6 +78,4 @@ class Mesh {
   void SetObject(const std::shared_ptr<Object>& new_object);
 
   friend class Scene;
-
-	void BufferMeshVertices(); // rebuffer vertices into GPU
 };
