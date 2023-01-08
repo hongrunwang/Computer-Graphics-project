@@ -3,6 +3,12 @@
 #include "common.h"
 #include "transform.h"
 
+struct Interaction{
+	Float dis; // signed distance
+	Vec3 position;
+	Vec3 normal;
+};
+
 enum class MeshPrimitiveType {
   cube,
   sphere,
@@ -50,11 +56,16 @@ class Mesh {
 
   virtual void FixedUpdate();
 
+	// Simulation
+	Vec3 velocity;
+	Vec3 acceleration;
 	bool isFixed;
 	void ApplyTransform(Transform transform); // apply transform on each vertice
 	void BufferMeshVertices(); // rebuffer vertices into GPU
 	void Simulate(); // Simulate 1 step=fixed_delta_time
-	void CollisionResponse(Float phi, Vec3 position, Vec3 normal); // respond to a collision
+	Float sdf(Interaction &interaction); // calculate sdf of a point. return true if <0
+	bool CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction); // detect a collision
+	void CollisionResponse(Interaction &interaction); // respond to a collision
 
  protected:
   enum class DrawMode { arrays, elements };
@@ -64,10 +75,6 @@ class Mesh {
   DrawMode draw_mode;
   std::vector<MeshVertex> vertices;
   std::vector<UVec3> indices;
-
-	// Simulation
-	Vec3 velocity;
-	Vec3 acceleration;
 
   GLenum buffer_data_usage_vbo;
   GLenum buffer_data_usage_ebo;

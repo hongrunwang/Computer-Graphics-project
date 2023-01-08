@@ -77,7 +77,7 @@ int main() {
 	mesh_ground->BufferMeshVertices();
 	mesh_ground->isFixed=true;
 	mesh_wall->ApplyTransform(Transform(Vec3(0, 50, 50),
-                                Quat(1.0f/sqrt(2), 1.0f/sqrt(2), 0, 0),
+                                Quat(1.0f/sqrt(2), -1.0f/sqrt(2), 0, 0),
                                 Vec3(100, 1, 100)));
 	mesh_wall->BufferMeshVertices();
 	mesh_wall->isFixed=true;

@@ -260,7 +260,7 @@ void Mesh::DrawTriangles() const {
 	}
 }
 
-void Mesh::BufferMeshVertices() {
+void Mesh::BufferMeshVertices(){
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(MeshVertex) * vertices.size(), vertices.data(), buffer_data_usage_vbo);
@@ -283,7 +283,44 @@ void Mesh::Simulate(){
                              Vec3(1, 1, 1)));
 }
 
-// phi - signed distance, position and normal of collision point
-void Mesh::CollisionResponse(Float phi, Vec3 position, Vec3 normal){
-	
+Float Mesh::sdf(Interaction &interaction){
+	Vec3 v1,v2,normal;
+	interaction.dis=-inf;
+	Float t;
+	for(int i=0;i<vertices.size()/3;i++){
+		v1=vertices[i*3+1].position-vertices[i*3].position;
+		v2=vertices[i*3+2].position-vertices[i*3].position;
+		normal=glm::normalize(glm::cross(v1,v2));
+		v1=vertices[i*3].normal+vertices[i*3+1].normal+vertices[i*3+2].normal;
+		if(glm::dot(normal,v1)<0) normal=-normal; // tell apart outside and inside
+		v1=interaction.position-vertices[i*3].position;
+		t=glm::dot(v1,normal);
+		if(t>interaction.dis){
+			interaction.dis=t;
+			interaction.normal=normal;
+		}
+	}
+	return interaction.dis;
+}
+
+bool Mesh::CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction){
+	if(isFixed) return false; // skip fixed meshes
+	if(other->vertices.size()>6) return false; // temporarily only detect plane
+	for(int i=0;i<vertices.size();i++){
+		interaction.position=vertices[i].position;
+		if(other->sdf(interaction)<0){
+			printf("collision at (%f,%f,%f) with dis %f\n",interaction.position.x,interaction.position.y,interaction.position.z,interaction.dis);
+			return true;
+		}
+	}
+	return false;
+}
+
+void Mesh::CollisionResponse(Interaction &interaction){
+	Float t=glm::dot(velocity,interaction.normal);
+	if(t<0){
+		velocity=-velocity;
+		t=-t;
+	}
+	velocity=2*t*interaction.normal-velocity; // simply bounce
 }

@@ -28,9 +28,17 @@ void Scene::Update() {
 }
 
 void Scene::FixedUpdate() {
+	Interaction interaction;
 	for(unsigned i=0;i<simulation_steps_per_fixed_update_time;i++){
 		for (auto& object : objects){
 			object->mesh->Simulate();
+		}
+		for (auto& object1 : objects){
+			for (auto& object2 : objects){
+				if(object1!=object2&&object1->mesh->CollisionDetect(object2->mesh, interaction)){
+					object1->mesh->CollisionResponse(interaction);
+				}
+			}
 		}
 	}
 	for (auto& object : objects){

@@ -101,7 +101,7 @@ constexpr Float epsilon = std::numeric_limits<Float>::epsilon();
 
 constexpr Float fixed_delta_time = Float(0.02);
 constexpr Vec3 gravity = { 0, 9.8, 0 };
-constexpr unsigned simulation_steps_per_fixed_update_time = 20;
+constexpr unsigned simulation_steps_per_fixed_update_time = 2;
 constexpr Float simulation_delta_time = fixed_delta_time / Float(simulation_steps_per_fixed_update_time);
 
 
