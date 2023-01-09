@@ -10,6 +10,9 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
     ebo(0),
 	velocity(0,0,0),
 	acceleration(0,0,0),
+  q(1,0,0,0),
+  rotate_acceleration(0,0,0),
+  rotate_velocity(0,0,0),
 	isFixed(false) {
   // setup vertices and indices
   if (mesh_primitive == MeshPrimitiveType::cube) {
@@ -278,9 +281,22 @@ void Mesh::Simulate(){
 	if(isFixed)return;
 	acceleration=-gravity;
 	velocity+=acceleration*simulation_delta_time;
+  rotate_velocity += rotate_acceleration * simulation_delta_time;
+  Quat rotation  = {0, simulation_delta_time *rotate_velocity};
+  q = q + rotation * q;
+  q = glm::normalize(q);
+  const Mat4 model_matrix = object->transform->ModelMat();
+  const Mat4 model_inverse = glm::inverse(model_matrix);
+  for(int i=0;i<vertices.size();i++){
+		vertices[i].position=object->transform->TransformPoint(vertices[i].position, model_inverse);
+	}
 	ApplyTransform(Transform(velocity*simulation_delta_time,
-                             Quat(1, 0, 0, 0),
+                             q,
                              Vec3(1, 1, 1)));
+  for(int i=0;i<vertices.size();i++){
+		vertices[i].position=object->transform->TransformPoint(vertices[i].position, model_matrix);
+	}
+  object->transform->position += velocity*simulation_delta_time;
 }
 
 Float Mesh::sdf(Interaction &interaction){

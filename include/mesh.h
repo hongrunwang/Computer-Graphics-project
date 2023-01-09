@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "transform.h"
+#include "object.h"
 
 struct Interaction{
 	Float dis; // signed distance
@@ -57,6 +58,9 @@ class Mesh {
   virtual void FixedUpdate();
 
 	// Simulation
+  Vec3 rotate_velocity;
+  Vec3 rotate_acceleration;
+  Quat q;
 	Vec3 velocity;
 	Vec3 acceleration;
 	bool isFixed;

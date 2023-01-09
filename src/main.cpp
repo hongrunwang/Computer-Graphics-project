@@ -84,8 +84,14 @@ int main() {
 
 
     // objects
-    auto object_cube = scene.AddObject(mesh_cube, Shader::shader_phong);
-    auto object_sphere = scene.AddObject(mesh_sphere, Shader::shader_phong);
+    auto object_cube = scene.AddObject(mesh_cube, Shader::shader_phong, 
+                                                Transform(Vec3(-3.5, 2, 0.3),
+                                                 Quat(1, 0, 0, 0),
+                                                 Vec3(1, 1, 1)));
+    auto object_sphere = scene.AddObject(mesh_sphere, Shader::shader_phong,
+                                                Transform(Vec3(3.5, 2, 0.3),
+                                                 Quat(1, 0, 0, 0),
+                                                 Vec3(1, 1, 1)));
 	auto object_ground = scene.AddObject(mesh_ground, Shader::shader_phong);
 	auto object_wall = scene.AddObject(mesh_wall, Shader::shader_phong);
     object_cube->color = { Float(0.75), one, zero };
