@@ -168,6 +168,33 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
     abort();
   }
 
+  // initialize mass and I_ref
+  mass = 0;
+  I_ref = Mat4(0.0f);
+  float m = 1;
+  for (int i = 0; i < vertices.size(); i++)
+  {
+    mass += m;
+
+    float diag_val = m * glm::length(vertices[i].position) * glm::length(vertices[i].position);
+    I_ref[0][0] += diag_val;
+    I_ref[1][1] += diag_val;
+    I_ref[2][2] += diag_val;
+
+    I_ref[0][0] -= m * vertices[i].position.x * vertices[i].position.x;
+    I_ref[0][1] -= m * vertices[i].position.x * vertices[i].position.y;
+    I_ref[0][2] -= m * vertices[i].position.x * vertices[i].position.z;
+
+    I_ref[1][0] -= m * vertices[i].position.y * vertices[i].position.x;
+    I_ref[1][1] -= m * vertices[i].position.y * vertices[i].position.y;
+    I_ref[1][2] -= m * vertices[i].position.y * vertices[i].position.z;
+
+    I_ref[2][0] -= m * vertices[i].position.z * vertices[i].position.x;
+    I_ref[2][1] -= m * vertices[i].position.z * vertices[i].position.y;
+    I_ref[2][2] -= m * vertices[i].position.z * vertices[i].position.z;
+  }
+  I_ref[3][3] = 1.0f;
+
   // construct vao for triangles
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
