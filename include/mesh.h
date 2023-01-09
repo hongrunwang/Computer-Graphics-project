@@ -63,7 +63,8 @@ class Mesh {
   Quat q;
 	Vec3 velocity;
 	Vec3 acceleration;
-  float mass = 1.0f;
+  float mass;
+  Mat4 I_ref;
   float mu_n = 0.5f; // restitution coefficient for collision
   float mu_t = 0.2f; // friction coefficient in tangent direction
 	bool isFixed;
