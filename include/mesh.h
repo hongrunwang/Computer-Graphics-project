@@ -63,10 +63,10 @@ class Mesh {
   Quat q;
 	Vec3 velocity;
 	Vec3 acceleration;
-  float mass;
+  Float mass;
   Mat4 I_ref;
-  float mu_n = 0.5f; // restitution coefficient for collision
-  float mu_t = 0.2f; // friction coefficient in tangent direction
+  Float mu_n = 0.5f; // restitution coefficient for collision
+  Float mu_t = 0.2f; // friction coefficient in tangent direction
 	bool isFixed;
 	MeshPrimitiveType type;
 	Vec3 center,normal;Float radius; // for subclasses
@@ -76,6 +76,7 @@ class Mesh {
 	virtual Float sdf(Interaction &interaction); // calculate sdf of a point. return true if <0
 	virtual bool CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction); // detect a collision
 	void CollisionResponse(Interaction &interaction); // respond to a collision
+  Mat4 RotateMat(Quat q); // rotation matrix
   Mat4 CrossMat(Vec3 v); // change cross product to matrix form
   void WorldToLocal(); // Translate World coordinate into local;
   void LocalToWorld(); // Translate Local coordinate into World;
