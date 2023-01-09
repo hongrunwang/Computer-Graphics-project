@@ -1,4 +1,4 @@
-# CS171.01 Final Project
+## CS171.01 Final Project - Massive Rigid-Body Simulation
 
 Name: 丁弘毅 王鸿润 刘放勋
 Student ID: 2020533039 __ 2020533047
@@ -34,8 +34,8 @@ Lecture notes
 
 ## TODO
 
-+ Optimize `Scene::FixedUpdate()` with Spatial Hashing
-+ Implement an accurate `Mesh::CollisionResponse()` (Currently just part of it)
-+ Derive subclasses `Sphere`,`Plane`,`Cube` etc. from `Mesh` for better performance by making `sdf()` virtual
-+ Build a scene that many rigid bodies falling to an inclined plane
-+ Need rotation matrix R and inertia I
+- [ ] Optimize `Scene::FixedUpdate()` with Spatial Hashing
+- [ ] Implement an accurate `Mesh::CollisionResponse()` (Currently just part of it)
+- [x] Derive subclasses `Sphere`,`Plane`,`Cube` etc. from `Mesh` for better performance by making `sdf()` virtual
+- [ ] Build a scene that many rigid bodies falling to an inclined plane
+- [ ] Need rotation matrix R and inertia I

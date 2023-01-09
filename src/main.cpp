@@ -26,7 +26,7 @@ int main() {
     }
 
     // create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(window_width, window_height, "CS171 HW5: Cloth Simulation", NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, "CS171 Project: Massive Rigid-Body Simulation", NULL, NULL);
     if (!window) {
       glfwTerminate();
       return -1;
@@ -58,18 +58,18 @@ int main() {
     scene.light_color = Vec3(1, 1, 1) * Float(1.125);
 
     // mesh primitives
-    auto mesh_cube = std::make_shared<Mesh>(MeshPrimitiveType::cube);
-    auto mesh_sphere = std::make_shared<Mesh>(MeshPrimitiveType::sphere);
-    auto mesh_ground = std::make_shared<Mesh>(MeshPrimitiveType::rectangle);
-    auto mesh_wall = std::make_shared<Mesh>(MeshPrimitiveType::rectangle);
+    std::shared_ptr<Mesh> mesh_cube = std::make_shared<Cube>();
+    std::shared_ptr<Mesh> mesh_sphere = std::make_shared<Sphere>();
+    std::shared_ptr<Mesh> mesh_ground = std::make_shared<Rect>();
+    std::shared_ptr<Mesh> mesh_wall = std::make_shared<Rect>();
 
 	mesh_cube->ApplyTransform(Transform(Vec3(-3.5, 2, 0.3),
                               Quat(1, 0, 0, 0),
                               Vec3(1, 1, 1)));
 	mesh_cube->BufferMeshVertices();
-	mesh_sphere->ApplyTransform(Transform(Vec3(3.5, 2, 0.3),
+	mesh_sphere->ApplyTransform(Transform(Vec3(3.5, 20, 0.3),
                                 Quat(1, 0, 0, 0),
-                                Vec3(1, 1, 1)));
+                                Vec3(5, 5, 5)));
 	mesh_sphere->BufferMeshVertices();
 	mesh_ground->ApplyTransform(Transform(Vec3(0, 0, 0),
                                 Quat(1, 0, 0, 0),
@@ -84,20 +84,29 @@ int main() {
 
 
     // objects
-    auto object_cube = scene.AddObject(mesh_cube, Shader::shader_phong, 
-                                                Transform(Vec3(-3.5, 2, 0.3),
-                                                 Quat(1, 0, 0, 0),
-                                                 Vec3(1, 1, 1)));
-    auto object_sphere = scene.AddObject(mesh_sphere, Shader::shader_phong,
-                                                Transform(Vec3(3.5, 2, 0.3),
-                                                 Quat(1, 0, 0, 0),
-                                                 Vec3(1, 1, 1)));
-	auto object_ground = scene.AddObject(mesh_ground, Shader::shader_phong);
-	auto object_wall = scene.AddObject(mesh_wall, Shader::shader_phong);
+    std::shared_ptr<Object> object_cube = scene.AddObject(mesh_cube, Shader::shader_phong);
+    std::shared_ptr<Object> object_sphere = scene.AddObject(mesh_sphere, Shader::shader_phong);
+	std::shared_ptr<Object> object_ground = scene.AddObject(mesh_ground, Shader::shader_phong);
+	std::shared_ptr<Object> object_wall = scene.AddObject(mesh_wall, Shader::shader_phong);
     object_cube->color = { Float(0.75), one, zero };
     object_sphere->color = { one, Float(0.75), zero };
     object_ground->color = { zero, Float(0.75), one };
     object_wall->color = { zero, Float(0.75), one };
+
+	std::shared_ptr<Object>spheres[5][5];
+	for(int i=0;i<5;i++){
+		for(int j=0;j<5;j++){
+			std::shared_ptr<Mesh> mesh = std::make_shared<Sphere>();
+			mesh->ApplyTransform(
+				Transform(Vec3(3.2+1.2*i, 6, 1.2*j),
+				Quat(1, 0, 0, 0),
+				Vec3(1, 1, 1))
+			);
+			mesh->BufferMeshVertices();
+			spheres[i][j]=scene.AddObject(mesh, Shader::shader_phong);
+			spheres[i][j]->color = { one, Float(0.75), zero };
+		}
+	}
 
     // loop until the user closes the window
     Input::Start(window);

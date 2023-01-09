@@ -290,7 +290,6 @@ void Mesh::Simulate(){
                              q,
                              Vec3(1, 1, 1)));
   LocalToWorld();
-  object->transform->position += velocity*simulation_delta_time;
 }
 
 Float Mesh::sdf(Interaction &interaction){
@@ -315,7 +314,7 @@ Float Mesh::sdf(Interaction &interaction){
 
 bool Mesh::CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction){
 	if(isFixed) return false; // skip fixed meshes
-	if(other->vertices.size()>6) return false; // temporarily only detect plane
+	// if(other->vertices.size()>6) return false; // temporarily only detect plane
 	for(int i=0;i<vertices.size();i++){
 		interaction.position=vertices[i].position;
 		if(other->sdf(interaction)<0){
@@ -327,12 +326,13 @@ bool Mesh::CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction
 }
 
 void Mesh::CollisionResponse(Interaction &interaction){
-	// Float t=glm::dot(velocity,interaction.normal);
-	// if(t<0){
-	// 	velocity=-velocity;
-	// 	t=-t;
-	// }
-	// velocity=2*t*interaction.normal-velocity; // simply bounce
+	Float t=glm::dot(velocity,interaction.normal);
+	if(t<0){
+		velocity=-velocity;
+		t=-t;
+	}
+	velocity=2*t*interaction.normal-velocity; // simply bounce
+	return;
 
   // If velocity is not inward, return
   if (glm::dot(velocity, interaction.normal) >= 0)

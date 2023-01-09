@@ -67,11 +67,13 @@ class Mesh {
   float mu_n = 0.5f; // restitution coefficient for collision
   float mu_t = 0.2f; // friction coefficient in tangent direction
 	bool isFixed;
-	void ApplyTransform(Transform transform); // apply transform on each vertice
+	MeshPrimitiveType type;
+	Vec3 center,normal;Float radius; // for subclasses
+	virtual void ApplyTransform(Transform transform); // apply transform on each vertice
 	void BufferMeshVertices(); // rebuffer vertices into GPU
 	void Simulate(); // Simulate 1 step=fixed_delta_time
-	Float sdf(Interaction &interaction); // calculate sdf of a point. return true if <0
-	bool CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction); // detect a collision
+	virtual Float sdf(Interaction &interaction); // calculate sdf of a point. return true if <0
+	virtual bool CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction); // detect a collision
 	void CollisionResponse(Interaction &interaction); // respond to a collision
   Mat4 CrossMat(Vec3 v); // change cross product to matrix form
   void WorldToLocal(); // Translate World coordinate into local;

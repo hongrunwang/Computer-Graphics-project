@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(CS171-hw5 LANGUAGES C CXX)
 
 option(USE_FILESYSTEM "use std::filesystem" off)
-# add_compile_options(-W -O3) # disable all warnings
+add_compile_options(-w -O3) # disable all warnings
 
 # glfw
 option(GLFW_BUILD_TESTS off)

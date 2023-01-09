@@ -2,6 +2,7 @@
 
 #include "camera.h"
 #include "mesh.h"
+#include "rigids.hpp"
 #include "object.h"
 #include "shader.h"
 
