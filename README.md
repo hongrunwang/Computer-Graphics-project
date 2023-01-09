@@ -1,7 +1,7 @@
 # CS171.01 Final Project
 
 Name: 丁弘毅 王鸿润 刘放勋
-Student ID: 2020533039 
+Student ID: 2020533039 __ 2020533047
 
 **Please write your Chinese name and your student ID in this README.**
 
@@ -19,6 +19,9 @@ Refer to [course page](https://faculty.sist.shanghaitech.edu.cn/faculty/liuxp/co
 + Now every coordinate in `Mesh::vertices[].position` is world coordinate. So Class `Object` is rather redundant and `Object::transform` should always be identity transform
 + I disabled `FIRST_PERSON_CAMERA` in `camera.h`, so use right mouse button to change view angle. And use space to resume simulation
 
++ Implement part of an accurate `Mesh::CollisionResponse()`
++ Add mass, mu_n, mu_t as constants to the constructor of mesh
+
 ## References
 
 Lectures 3,4,9 of 
@@ -32,5 +35,7 @@ Lecture notes
 ## TODO
 
 + Optimize `Scene::FixedUpdate()` with Spatial Hashing
-+ Implement an accurate `Mesh::CollisionResponse()` (Currently just simple bounce for testing)
++ Implement an accurate `Mesh::CollisionResponse()` (Currently just part of it)
 + Derive subclasses `Sphere`,`Plane`,`Cube` etc. from `Mesh` for better performance by making `sdf()` virtual
++ Build a scene that many rigid bodies falling to an inclined plane
++ Need rotation matrix R and inertia I
