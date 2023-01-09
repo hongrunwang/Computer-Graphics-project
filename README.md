@@ -20,7 +20,8 @@ Refer to [course page](https://faculty.sist.shanghaitech.edu.cn/faculty/liuxp/co
 + I disabled `FIRST_PERSON_CAMERA` in `camera.h`, so use right mouse button to change view angle. And use space to resume simulation
 
 + Implement part of an accurate `Mesh::CollisionResponse()`
-+ Add mass, mu_n, mu_t as constants to the constructor of mesh
++ Add mu_n, mu_t as constants to the constructor of mesh
++ Add initialization of mass and inertia(I_ref)
 
 ## References
 
