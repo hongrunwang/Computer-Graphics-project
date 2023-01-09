@@ -353,13 +353,13 @@ bool Mesh::CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction
 }
 
 void Mesh::CollisionResponse(Interaction &interaction){
-	Float t=glm::dot(velocity,interaction.normal);
-	if(t<0){
-		velocity=-velocity;
-		t=-t;
-	}
-	velocity=2*t*interaction.normal-velocity; // simply bounce
-	return;
+	// Float t=glm::dot(velocity,interaction.normal);
+	// if(t<0){
+	// 	velocity=-velocity;
+	// 	t=-t;
+	// }
+	// velocity=2*t*interaction.normal-velocity; // simply bounce
+	// return;
 
   // If velocity is not inward, return
   if (glm::dot(velocity, interaction.normal) >= 0)
