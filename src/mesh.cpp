@@ -327,12 +327,55 @@ bool Mesh::CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction
 }
 
 void Mesh::CollisionResponse(Interaction &interaction){
-	Float t=glm::dot(velocity,interaction.normal);
-	if(t<0){
-		velocity=-velocity;
-		t=-t;
-	}
-	velocity=2*t*interaction.normal-velocity; // simply bounce
+	// Float t=glm::dot(velocity,interaction.normal);
+	// if(t<0){
+	// 	velocity=-velocity;
+	// 	t=-t;
+	// }
+	// velocity=2*t*interaction.normal-velocity; // simply bounce
+
+  // If velocity is not inward, return
+  if (glm::dot(velocity, interaction.normal) >= 0)
+  {
+    return;
+  }
+
+  // Caluculate new velocity
+  Vec3 velocity_n, velocity_t;
+  velocity_n = glm::dot(velocity, interaction.normal) * interaction.normal;
+  velocity_t = velocity - velocity_n;
+
+  float a = fmax(1 - mu_t * (1 + mu_n) * glm::length(velocity_n) / glm::length(velocity_t), 0.0f);
+  Vec3 new_velocity_n = -mu_n * velocity_n;
+  Vec3 new_velocity_t = a * velocity_t;
+  Vec3 new_velocity = new_velocity_n + new_velocity_t;
+
+  // Caluculate impulse j
+  Mat4 R_Mat, I_ref;
+  Mat4 I = R_Mat * I_ref * glm::transpose(R_Mat);
+
+  Vec3 ri = object->transform->TransformPoint(interaction.position, glm::inverse(object->transform->ModelMat())); // get local coordinate
+  Vec4 Rri4 = R_Mat * Vec4(ri, 0);
+  Vec3 Rri = Vec3(Rri4.x, Rri4.y, Rri4.z);
+
+  Mat4 K = Mat4(1.0f) / mass - CrossMat(Rri) * glm::inverse(I) * CrossMat(Rri);
+
+  Vec4 j4 = glm::inverse(K) * Vec4(new_velocity - velocity, 0);
+  Vec3 j = Vec3(j4.x, j4.y, j4.z);
+
+  // Update v and w
+  velocity += j / mass;
+  Vec4 w4 = glm::inverse(I) * Vec4(glm::cross(Rri, j), 0);
+  rotate_velocity += Vec3(w4.x, w4.y, w4.z);
+}
+
+Mat4 Mesh::CrossMat(Vec3 v)
+{
+  return {
+    0, -v[2], v[1], 0,
+    v[2], 0, -v[0], 0,
+    -v[1], v[0], 0, 0,
+    0, 0, 0, 1 };
 }
 
 void Mesh::WorldToLocal(){
