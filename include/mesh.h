@@ -70,6 +70,8 @@ class Mesh {
 	Float sdf(Interaction &interaction); // calculate sdf of a point. return true if <0
 	bool CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction); // detect a collision
 	void CollisionResponse(Interaction &interaction); // respond to a collision
+  void WorldToLocal(); // Translate World coordinate into local;
+  void LocalToWorld(); // Translate Local coordinate into World;
 
  protected:
   enum class DrawMode { arrays, elements };

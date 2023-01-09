@@ -285,17 +285,11 @@ void Mesh::Simulate(){
   Quat rotation  = {0, simulation_delta_time *rotate_velocity};
   q = q + rotation * q;
   q = glm::normalize(q);
-  const Mat4 model_matrix = object->transform->ModelMat();
-  const Mat4 model_inverse = glm::inverse(model_matrix);
-  for(int i=0;i<vertices.size();i++){
-		vertices[i].position=object->transform->TransformPoint(vertices[i].position, model_inverse);
-	}
+  WorldToLocal();
 	ApplyTransform(Transform(velocity*simulation_delta_time,
                              q,
                              Vec3(1, 1, 1)));
-  for(int i=0;i<vertices.size();i++){
-		vertices[i].position=object->transform->TransformPoint(vertices[i].position, model_matrix);
-	}
+  LocalToWorld();
   object->transform->position += velocity*simulation_delta_time;
 }
 
@@ -339,4 +333,20 @@ void Mesh::CollisionResponse(Interaction &interaction){
 		t=-t;
 	}
 	velocity=2*t*interaction.normal-velocity; // simply bounce
+}
+
+void Mesh::WorldToLocal(){
+  const Mat4 model_matrix = object->transform->ModelMat();
+  const Mat4 model_inverse = glm::inverse(model_matrix);
+  for(int i=0;i<vertices.size();i++){
+		vertices[i].position=object->transform->TransformPoint(vertices[i].position, model_inverse);
+	}
+}
+
+void Mesh::LocalToWorld(){
+  const Mat4 model_matrix = object->transform->ModelMat();
+  const Mat4 model_inverse = glm::inverse(model_matrix);
+  for(int i=0;i<vertices.size();i++){
+		vertices[i].position=object->transform->TransformPoint(vertices[i].position, model_matrix);
+	}
 }
