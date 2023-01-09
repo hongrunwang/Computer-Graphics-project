@@ -63,6 +63,9 @@ class Mesh {
   Quat q;
 	Vec3 velocity;
 	Vec3 acceleration;
+  float mass = 1.0f;
+  float mu_n = 0.5f; // restitution coefficient for collision
+  float mu_t = 0.2f; // friction coefficient in tangent direction
 	bool isFixed;
 	void ApplyTransform(Transform transform); // apply transform on each vertice
 	void BufferMeshVertices(); // rebuffer vertices into GPU
@@ -70,6 +73,7 @@ class Mesh {
 	Float sdf(Interaction &interaction); // calculate sdf of a point. return true if <0
 	bool CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction); // detect a collision
 	void CollisionResponse(Interaction &interaction); // respond to a collision
+  Mat4 CrossMat(Vec3 v); // change cross product to matrix form
   void WorldToLocal(); // Translate World coordinate into local;
   void LocalToWorld(); // Translate Local coordinate into World;
 
