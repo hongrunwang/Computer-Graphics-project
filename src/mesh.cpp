@@ -169,14 +169,14 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
   }
 
   // initialize mass and I_ref
-  mass = 0;
+  mass = 0.0f;
   I_ref = Mat4(0.0f);
-  float m = 1;
+  Float m = 1.0f;
   for (int i = 0; i < vertices.size(); i++)
   {
     mass += m;
 
-    float diag_val = m * glm::length(vertices[i].position) * glm::length(vertices[i].position);
+    Float diag_val = m * glm::length(vertices[i].position) * glm::length(vertices[i].position);
     I_ref[0][0] += diag_val;
     I_ref[1][1] += diag_val;
     I_ref[2][2] += diag_val;
@@ -372,13 +372,13 @@ void Mesh::CollisionResponse(Interaction &interaction){
   velocity_n = glm::dot(velocity, interaction.normal) * interaction.normal;
   velocity_t = velocity - velocity_n;
 
-  float a = fmax(1 - mu_t * (1 + mu_n) * glm::length(velocity_n) / glm::length(velocity_t), 0.0f);
+  Float a = fmax(1 - mu_t * (1 + mu_n) * glm::length(velocity_n) / glm::length(velocity_t), 0.0f);
   Vec3 new_velocity_n = -mu_n * velocity_n;
   Vec3 new_velocity_t = a * velocity_t;
   Vec3 new_velocity = new_velocity_n + new_velocity_t;
 
   // Caluculate impulse j
-  Mat4 R_Mat, I_ref;
+  Mat4 R_Mat = RotateMat(q);
   Mat4 I = R_Mat * I_ref * glm::transpose(R_Mat);
 
   Vec3 ri = object->transform->TransformPoint(interaction.position, glm::inverse(object->transform->ModelMat())); // get local coordinate
@@ -394,6 +394,19 @@ void Mesh::CollisionResponse(Interaction &interaction){
   velocity += j / mass;
   Vec4 w4 = glm::inverse(I) * Vec4(glm::cross(Rri, j), 0);
   rotate_velocity += Vec3(w4.x, w4.y, w4.z);
+}
+
+Mat4 Mesh::RotateMat(Quat q)
+{
+  Float
+    xx = q.x * q.x, yy = q.y * q.y, zz = q.z * q.z,
+    xy = q.x * q.y, yz = q.y * q.z, zw = q.z * q.w, wx = q.w * q.x,
+    xz = q.x * q.z, yw = q.y * q.w;
+  return {
+    1 - 2 * (yy + zz), 2 * (xy + zw), 2 * (xz - yw), 0,
+    2 * (xy - zw), 1 - 2 * (xx + zz), 2 * (yz + wx), 0,
+    2 * (xz + yw), 2 * (yz - wx), 1 - 2 * (xx + yy), 0,
+    0, 0, 0, 1 };
 }
 
 Mat4 Mesh::CrossMat(Vec3 v)
