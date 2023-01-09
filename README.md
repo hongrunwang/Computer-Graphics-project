@@ -38,4 +38,4 @@ Lecture notes
 - [ ] Implement an accurate `Mesh::CollisionResponse()` (Currently just part of it)
 - [x] Derive subclasses `Sphere`,`Plane`,`Cube` etc. from `Mesh` for better performance by making `sdf()` virtual
 - [ ] Build a scene that many rigid bodies falling to an inclined plane
-- [ ] Need rotation matrix R and inertia I
+- [x] Need rotation matrix R and inertia I
