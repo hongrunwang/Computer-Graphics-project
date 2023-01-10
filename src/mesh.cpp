@@ -13,6 +13,7 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
   q(1,0,0,0),
   rotate_acceleration(0,0,0),
   rotate_velocity(0,0,0),
+  translate(0,0,0),
 	isFixed(false) {
   // setup vertices and indices
   if (mesh_primitive == MeshPrimitiveType::cube) {
@@ -67,6 +68,7 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
         UVec3(24, 25, 26), UVec3(27, 28, 29),
         UVec3(30, 31, 32), UVec3(33, 34, 35),
       };
+    for (int i = 0; i < vertices.size(); i++)v0.push_back(vertices[i]);
   }
   else if (mesh_primitive == MeshPrimitiveType::sphere) {
     // compute vertices and indices for +x part
@@ -149,6 +151,7 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
       UVec3 index = indices[i];
       indices.emplace_back(UVec3(index.x + index_start, index.y + index_start, index.z + index_start));
     }
+    for (int i = 0; i < vertices.size(); i++)v0.push_back(vertices[i]);
   }
   else if (mesh_primitive == MeshPrimitiveType::rectangle) {
 	vertices = {
@@ -159,6 +162,7 @@ Mesh::Mesh(const MeshPrimitiveType& mesh_primitive) :
 		MeshVertex(Vec3(-0.5, 0,  0.5), Vec3( 0.0,  1.0,  0.0), Vec2(0.0, 0.0)),
 		MeshVertex(Vec3(-0.5, 0, -0.5), Vec3( 0.0,  1.0,  0.0), Vec2(0.0, 1.0)),
 	};
+  for (int i = 0; i < vertices.size(); i++)v0.push_back(vertices[i]);
 	indices = {
 		UVec3( 0,  1,  2), UVec3( 3,  4,  5),
 	};
@@ -298,10 +302,23 @@ void Mesh::BufferMeshVertices(){
 }
 
 void Mesh::ApplyTransform(Transform transform){
-	for(int i=0;i<vertices.size();i++){
+  if(first){
+    t = transform;
+    first = false;
+    for(int i=0;i<vertices.size();i++){
 		vertices[i].position=transform.TransformPoint(vertices[i].position);
 		vertices[i].normal=Transform::TransformPoint(vertices[i].normal, transform.RotationMat());
-	}
+	  }
+  }
+  else{
+    Transform tmp=t;
+    tmp.position += translate;
+    tmp.rotation = transform.rotation;
+    for(int i=0;i<vertices.size();i++){
+      vertices[i].position=tmp.TransformPoint(v0[i].position);
+      vertices[i].normal=Transform::TransformPoint(v0[i].normal, tmp.RotationMat());
+    }
+  }
 }
 
 void Mesh::Simulate(){
@@ -318,11 +335,10 @@ void Mesh::Simulate(){
   {
     return;
   }
-  WorldToLocal();
+  translate += velocity*simulation_delta_time;
 	ApplyTransform(Transform(velocity*simulation_delta_time,
                              q,
                              Vec3(1, 1, 1)));
-  LocalToWorld();
 }
 
 Float Mesh::sdf(Interaction &interaction){

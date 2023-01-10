@@ -63,6 +63,9 @@ class Mesh {
   Quat q;
 	Vec3 velocity;
 	Vec3 acceleration;
+  Vec3 translate;
+  bool first = true;
+  Transform t;
   Float mass;
   Mat4 I_ref;
   Float velocity_decay = 0.99f;
@@ -90,6 +93,7 @@ class Mesh {
 
   DrawMode draw_mode;
   std::vector<MeshVertex> vertices;
+  std::vector<MeshVertex> v0;
   std::vector<UVec3> indices;
 
   GLenum buffer_data_usage_vbo;
