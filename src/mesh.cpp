@@ -308,7 +308,9 @@ void Mesh::Simulate(){
 	if(isFixed)return;
 	acceleration=-gravity;
 	velocity+=acceleration*simulation_delta_time;
-  rotate_velocity += rotate_acceleration * simulation_delta_time;
+  velocity *= velocity_decay;
+  // rotate_velocity += rotate_acceleration * simulation_delta_time;
+  rotate_velocity *= angular_decay;
   Quat rotation  = {0, simulation_delta_time *rotate_velocity};
   q = q + rotation * q;
   q = glm::normalize(q);
@@ -362,17 +364,16 @@ void Mesh::CollisionResponse(Interaction &interaction){
 	// return;
 
   // If velocity is not inward, return
-  if (glm::dot(velocity, interaction.normal) >= 0)
+  if (glm::dot(velocity, interaction.normal) >= 0.0f)
   {
     return;
   }
 
   // Caluculate new velocity
-  Vec3 velocity_n, velocity_t;
-  velocity_n = glm::dot(velocity, interaction.normal) * interaction.normal;
-  velocity_t = velocity - velocity_n;
+  Vec3 velocity_n = glm::dot(velocity, interaction.normal) * interaction.normal;
+  Vec3 velocity_t = velocity - velocity_n;
 
-  Float a = fmax(1 - mu_t * (1 + mu_n) * glm::length(velocity_n) / glm::length(velocity_t), 0.0f);
+  Float a = fmax(1.0f - mu_t * (1.0f + mu_n) * glm::length(velocity_n) / glm::length(velocity_t), 0.0f);
   Vec3 new_velocity_n = -mu_n * velocity_n;
   Vec3 new_velocity_t = a * velocity_t;
   Vec3 new_velocity = new_velocity_n + new_velocity_t;
@@ -381,9 +382,10 @@ void Mesh::CollisionResponse(Interaction &interaction){
   Mat4 R_Mat = RotateMat(q);
   Mat4 I = R_Mat * I_ref * glm::transpose(R_Mat);
 
-  Vec3 ri = object->transform->TransformPoint(interaction.position, glm::inverse(object->transform->ModelMat())); // get local coordinate
-  Vec4 Rri4 = R_Mat * Vec4(ri, 0);
-  Vec3 Rri = Vec3(Rri4.x, Rri4.y, Rri4.z);
+  // Vec3 ri = object->transform->TransformPoint(interaction.position, glm::inverse(object->transform->ModelMat())); // get local coordinate
+  // Vec4 Rri4 = R_Mat * Vec4(ri, 0);
+  // Vec3 Rri = Vec3(Rri4.x, Rri4.y, Rri4.z);
+  Vec3 Rri = interaction.position - center;
 
   Mat4 K = Mat4(1.0f) / mass - CrossMat(Rri) * glm::inverse(I) * CrossMat(Rri);
 
