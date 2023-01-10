@@ -65,6 +65,8 @@ class Mesh {
 	Vec3 acceleration;
   Float mass;
   Mat4 I_ref;
+  Float velocity_decay = 0.99f;
+  Float angular_decay = 0.1f;
   Float mu_n = 0.5f; // restitution coefficient for collision
   Float mu_t = 0.2f; // friction coefficient in tangent direction
 	bool isFixed;
