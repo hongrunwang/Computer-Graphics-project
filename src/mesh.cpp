@@ -384,10 +384,6 @@ void Mesh::CollisionResponse(Interaction &interaction){
 	ApplyTransform(Transform(-2*interaction.dis*interaction.normal,
                              Quat(1, 0, 0, 0),
                              Vec3(1, 1, 1)));
-	// if (glm::length(velocity) < 1.0f)
-	// {
-		// velocity={0.0f, 0.0f, 0.0f};
-	// }
 	return;
 
   //////////////////////////////////////////////////////////////////////////
@@ -425,16 +421,8 @@ void Mesh::CollisionResponse(Interaction &interaction){
 
   // Update v and w
   velocity += j / mass;
-  if (glm::length(velocity) < 1.0f)
-  {
-    velocity={0.0f, 0.0f, 0.0f};
-  }
   Vec4 w4 = glm::inverse(I) * Vec4(glm::cross(Rri, j), 0);
   rotate_velocity += Vec3(w4.x, w4.y, w4.z);
-  if (glm::length(rotate_velocity) < 1.0f)
-  {
-    rotate_velocity={0.0f, 0.0f, 0.0f};
-  }
   return;
 }
 
