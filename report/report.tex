@@ -49,6 +49,16 @@ Here are some useful links:
 \section{Implementation Details}
 
 \subsection{Transform over time}
+For each object, it has its own velocity and angular velocity, acceleration and angular acceleration.In simulation,we update the status of every object ,compute the position and normal.\\
+For velocity, 
+\begin{equation*}
+velocity += acceleration\times Ddelta t,\quad position += v\times\Delta t.
+\end{equation*}
+For angular velocity, 
+\begin{equation*}
+\omega += angular acceleration \times\Delta t 
+\end{equation*} and the Quaternion of rotation is $q = q + \{0,\frac{\delta t}{2}\omega\}\times q$ and normalize the Quaternion.\\
+Then apply the transform function to change positon.
 
 \subsection{Collision Detection}
 
