@@ -46,6 +46,43 @@ Here are some useful links:
 \item \href{http://games-cn.org/games103/}{GAMES103 Lecture 3,4,9}
 \end{itemize}
 
+\section{Brief introduction of the paper's work}
+In the time background of the paper, many rigid body physics algorithms were slow, used too much memory, were difficult to implement,
+or had other nasty limitations. The author of \textit{Iterative Dynamics with Temporal Coherence} raised three ideas:
+\begin{itemize}
+	\item Use an approximate contact model that is easy to solve.
+	\item Use a sloppy but fast constraint solver.
+	\item Clean up the solution over several frames.
+\end{itemize}
+The author used the following toolkits in his implementation:
+\begin{itemize}
+	\item Contact point calculator.
+	\item Rigid bodies, constraints, and Jacobians.
+	\item Gauss-Seidel constraint solver and simple integrator.
+	\item Contact cache.
+\end{itemize}
+The key procedure of his algorithm is shown below: \\
+In each time stepping:
+\begin{itemize}
+	\item 1. Generate contact points.
+	\item 2. Initialize contact forces $\lambda$ using a contact cache (generated in the previous step).
+	\item 3. Compute the Jacobian $\mathbf{J}$ for non-penetration and friction constraints.
+	\item 4. Form an equation for $\lambda$.
+	\item 5. Use a Gauss-Seidel solver to refine $\lambda$.
+	\item 6. Compute new velocities $v$ and $\omega$ using $\lambda$.
+	\item 7. Compute new positions $x$ and $q$ from $v$ and $\omega$.
+	\item 8. Store $\lambda$ in the contact cache.
+	\item 9. Go to step 1.
+\end{itemize}
+His algorithm can be summarized as:
+\begin{itemize}
+	\item Compute the collision point.
+	\item Apply external force (such as gravity).
+	\item Apply impulse.
+	\item Update the positions.
+	\item Go back to loop.
+\end{itemize}
+
 \section{Implementation Details}
 
 \subsection{Transform over time}
@@ -69,7 +106,7 @@ If $t<0$, we reverse both $\mathbf{v}$ and $t$. Then we use the following way to
 $$\mathbf{v} \leftarrow 2 t \mathbf{n} - \mathbf{v}$$
 To make the resting contact stable, we judge that when the velocity is too small, stop updating position of the object. \\
 
-Then we look into a more accurate collision response. We choose the impulse method. Its basic idea is to use the velocity change of
+Then we look into a more advanced collision response. We choose the impulse method. Its basic idea is to use the velocity change of
 the collision point to get the impulse applied on the object, then use the impulse to update the velocity of the whole object.
 We implement the impulse method in the following four steps. \\
 
@@ -138,7 +175,11 @@ Lastly, we need to use the impulse to update $\mathbf{v}$ and $\mathbf{\omega}$:
 $$\mathbf{v} \leftarrow \mathbf{v} + \frac{1}{M}\mathbf{j}$$
 $$\mathbf{\omega} \leftarrow \mathbf{\omega} + \mathbf{I}^{-1}(\mathbf{R}\mathbf{r}_i\times\mathbf{j})$$
 
-Now the collision response using impulse method has finished.
+Now the collision response using impulse method has finished. \\
+
+Disappointingly, although we do the impulse method implementation following the above procedure, the simulaiton could not work well.
+We guess that it may be due to some difference on settings. At last, we use the first implementation to deal with collision response,
+but still retain the impulse method implementation in our code.
 
 \section{Results}
 
