@@ -302,23 +302,27 @@ void Mesh::BufferMeshVertices(){
 }
 
 void Mesh::ApplyTransform(Transform transform){
-  if(first){
-    t = transform;
-    first = false;
-    for(int i=0;i<vertices.size();i++){
+  // if(first){
+    // t = transform;
+    // first = false;
+    // for(int i=0;i<vertices.size();i++){
+		// vertices[i].position=transform.TransformPoint(vertices[i].position);
+		// vertices[i].normal=Transform::TransformPoint(vertices[i].normal, transform.RotationMat());
+	  // }
+  // }
+  // else{
+    // Transform tmp=t;
+    // tmp.position += translate;
+    // tmp.rotation += transform.rotation;
+    // for(int i=0;i<vertices.size();i++){
+      // vertices[i].position=tmp.TransformPoint(v0[i].position);
+      // vertices[i].normal=Transform::TransformPoint(v0[i].normal, tmp.RotationMat());
+    // }
+  // }
+	for(int i=0;i<vertices.size();i++){
 		vertices[i].position=transform.TransformPoint(vertices[i].position);
 		vertices[i].normal=Transform::TransformPoint(vertices[i].normal, transform.RotationMat());
-	  }
-  }
-  else{
-    Transform tmp=t;
-    tmp.position += translate;
-    tmp.rotation = transform.rotation;
-    for(int i=0;i<vertices.size();i++){
-      vertices[i].position=tmp.TransformPoint(v0[i].position);
-      vertices[i].normal=Transform::TransformPoint(v0[i].normal, tmp.RotationMat());
-    }
-  }
+	}
 }
 
 void Mesh::Simulate(){
