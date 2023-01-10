@@ -311,9 +311,13 @@ void Mesh::Simulate(){
   velocity *= velocity_decay;
   // rotate_velocity += rotate_acceleration * simulation_delta_time;
   rotate_velocity *= angular_decay;
-  Quat rotation  = {0, simulation_delta_time *rotate_velocity};
+  Quat rotation  = {0, 0.5f * simulation_delta_time * rotate_velocity};
   q = q + rotation * q;
   q = glm::normalize(q);
+  if (glm::length(velocity) < 1.0f)
+  {
+    return;
+  }
   WorldToLocal();
 	ApplyTransform(Transform(velocity*simulation_delta_time,
                              q,
@@ -355,13 +359,17 @@ bool Mesh::CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction
 }
 
 void Mesh::CollisionResponse(Interaction &interaction){
-	// Float t=glm::dot(velocity,interaction.normal);
-	// if(t<0){
-	// 	velocity=-velocity;
-	// 	t=-t;
-	// }
-	// velocity=2*t*interaction.normal-velocity; // simply bounce
-	// return;
+	Float t=glm::dot(velocity,interaction.normal);
+	if(t<0){
+		velocity=-velocity;
+		t=-t;
+	}
+  velocity=2*t*interaction.normal-velocity; // simply bounce
+	if (glm::length(velocity) < 1.0f)
+  {
+    velocity={0.0f, 0.0f, 0.0f};
+  }
+	return;
 
   //////////////////////////////////////////////////////////////////////////
 
@@ -381,9 +389,10 @@ void Mesh::CollisionResponse(Interaction &interaction){
   Vec3 velocity_ni = glm::dot(velocity_i, interaction.normal) * interaction.normal;
   Vec3 velocity_ti = velocity_i - velocity_ni;
 
-  Float a = fmax(1.0f - mu_t * (1.0f + mu_n) * glm::length(velocity_ni) / glm::length(velocity_ti), 0.0f);
+  // Float a = fmax(1.0f - mu_t * (1.0f + mu_n) * glm::length(velocity_ni) / glm::length(velocity_ti), 0.0f);
   Vec3 new_velocity_ni = -mu_n * velocity_ni;
-  Vec3 new_velocity_ti = a * velocity_ti;
+  // Vec3 new_velocity_ti = a * velocity_ti;
+  Vec3 new_velocity_ti = mu_t * velocity_ti;
   Vec3 new_velocity_i = new_velocity_ni + new_velocity_ti;
 
   // Caluculate impulse j
@@ -397,8 +406,17 @@ void Mesh::CollisionResponse(Interaction &interaction){
 
   // Update v and w
   velocity += j / mass;
+  if (glm::length(velocity) < 1.0f)
+  {
+    velocity={0.0f, 0.0f, 0.0f};
+  }
   Vec4 w4 = glm::inverse(I) * Vec4(glm::cross(Rri, j), 0);
-  // rotate_velocity += Vec3(w4.x, w4.y, w4.z);
+  rotate_velocity += Vec3(w4.x, w4.y, w4.z);
+  if (glm::length(rotate_velocity) < 1.0f)
+  {
+    rotate_velocity={0.0f, 0.0f, 0.0f};
+  }
+  return;
 }
 
 Mat4 Mesh::RotateMat(Quat q)
