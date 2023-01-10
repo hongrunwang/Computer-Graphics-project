@@ -19,7 +19,7 @@ Refer to [course page](https://faculty.sist.shanghaitech.edu.cn/faculty/liuxp/co
 + Now every coordinate in `Mesh::vertices[].position` is world coordinate. So Class `Object` is rather redundant and `Object::transform` should always be identity transform
 + I disabled `FIRST_PERSON_CAMERA` in `camera.h`, so use right mouse button to change view angle. And use space to resume simulation
 
-+ Implement part of an accurate `Mesh::CollisionResponse()`
++ Implement an accurate `Mesh::CollisionResponse()` but have bug
 + Add mu_n, mu_t as constants to the constructor of mesh
 + Add initialization of mass and inertia(I_ref)
 
@@ -36,7 +36,7 @@ Lecture notes
 ## TODO
 
 - [ ] Optimize `Scene::FixedUpdate()` with Spatial Hashing
-- [ ] Implement an accurate `Mesh::CollisionResponse()` (Currently just part of it)
+- [ ] Implement an accurate `Mesh::CollisionResponse()` (Currently have bug)
 - [x] Derive subclasses `Sphere`,`Plane`,`Cube` etc. from `Mesh` for better performance by making `sdf()` virtual
 - [ ] Build a scene that many rigid bodies falling to an inclined plane
 - [x] Need rotation matrix R and inertia I
