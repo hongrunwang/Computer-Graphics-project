@@ -53,6 +53,82 @@ Here are some useful links:
 \subsection{Collision Detection}
 
 \subsection{Collision Response}
+First, we implement a simple form of collision response. If the velocity $v$ of current object is pointing into the collided object,
+we check the dot product of $\mathbf{v}$ and normal $\mathbf{n}$ of the collision point: $t = \mathbf{v}\cdot\mathbf{n}$.
+If $t<0$, we reverse both $\mathbf{v}$ and $t$. Then we use the following way to update the velocity:
+$$\mathbf{v} \leftarrow 2 t \mathbf{n} - \mathbf{v}$$
+To make the resting contact stable, we judge that when the velocity is too small, stop updating position of the object. \\
+
+Then we look into a more accurate collision response. We choose the impulse method. Its basic idea is to use the velocity change of
+the collision point to get the impulse applied on the object, then use the impulse to update the velocity of the whole object.
+We implement the impulse method in the following four steps. \\
+
+\textbf{Step 1: Judge whether the update is needed} \\
+In the previous collision detection phase, we have detected the collision point. Then we need to judge whether the velocity $\mathbf{v}_i$ of
+the collision point is pointing to the inside of the collided object. If not, then we don't need to do the update as the velocity
+is already outward. \\
+
+\textbf{Step 2: Compute the new velocity $\mathbf{v}_i^{new}$ of the collision point $i$} \\
+Denote the normal of the collision point to be $\mathbf{N}$, pointing to the outside of the collided object. First we decompose
+the old velocity $\mathbf{v}_i$ into normal velocity $\mathbf{v}_{\mathbf{N},i}$ and tangential velocity $\mathbf{v}_{\mathbf{T},i}$:
+$$\mathbf{v}_{\mathbf{N},i} \leftarrow (\mathbf{v}_i\cdot \mathbf{N})\mathbf{N}$$
+$$\mathbf{v}_{\mathbf{T},i} \leftarrow \mathbf{v}_i - \mathbf{v}_{\mathbf{T},i}$$
+We introduce two coefficients $\mu_\mathbf{N},\mu_\mathbf{T} \in (0,1)$ to update the two decomposed velocities separately.
+We wish our object to go away from the collided object, so the normal velocity should be reversed, and by conservation of energy,
+the out normal velocity should be no larger than the in normal velocity, and may decay in energy.
+So we update the normal velocity by the following:
+$$\mathbf{v}_{\mathbf{N},i}^{new} \leftarrow -\mu_\mathbf{N} \mathbf{v}_{\mathbf{N},i}$$
+Due to the existence of friction, the tangential velocity should also decay in energy.
+We update the tangential velocity by the following:
+$$\mathbf{v}_{\mathbf{T},i}^{new} \leftarrow a \mathbf{v}_{\mathbf{T},i}$$
+The computation of $a$ is needed. By Amontons-Coulomb Friction Laws, we know
+$$F_f \leq \mu_\mathbf{T} F_N,$$
+where $\mu_\mathbf{T}$ is the friction coefficient, then
+$$||\mathbf{v}_{\mathbf{T},i}^{new} - \mathbf{v}_{\mathbf{T},i}|| \leq \mu_\mathbf{T} ||\mathbf{v}_{\mathbf{N},i}^{new} - \mathbf{v}_{\mathbf{N},i}||$$
+$$(1-a)||\mathbf{v}_{\mathbf{T},i}|| \leq \mu_\mathbf{T} (1+\mu_\mathbf{N})||\mathbf{v}_{\mathbf{N},i}||$$
+$$a \leq 1 - \frac{\mu_\mathbf{T} (1+\mu_\mathbf{N})||\mathbf{v}_{\mathbf{N},i}||}{||\mathbf{v}_{\mathbf{T},i}||}$$
+In our simulation, we take the equals sign. $a$ should also satisfies $a \geq 0$, so the computation of $a$ is:
+$$a \leftarrow \max(1 - \frac{\mu_\mathbf{T} (1+\mu_\mathbf{N})||\mathbf{v}_{\mathbf{N},i}||}{||\mathbf{v}_{\mathbf{T},i}||}, 0)$$
+Now we have the normal and tangential velocity of the new velocity, then the new velocity is:
+$$\mathbf{v}_i^{new} \leftarrow \mathbf{v}_{\mathbf{N},i} + \mathbf{v}_{\mathbf{T},i}$$
+
+\textbf{Step 3: Compute the impulse $\mathbf{j}$} \\
+Assume the impulse is applied on the collision point, it will change the velocity and the angular velocity of the object:
+$$\mathbf{v}^{new} \leftarrow \mathbf{v} + \frac{1}{M}\mathbf{j}$$
+$$\mathbf{\omega}^{new} \leftarrow \mathbf{\omega} + \mathbf{I}^{-1}(\mathbf{R}\mathbf{r}_i\times\mathbf{j})$$
+where $\mathbf{I}$ is the inertia, $\mathbf{R}$ is the rotation matrix and $\mathbf{r}$ is the local coordinate of the collision point.
+$(\mathbf{R}\mathbf{r}_i\times\mathbf{j})$ is the torque induced by $\mathbf{j}$. \\
+Then we take the $\mathbf{v}^{new},\mathbf{\omega}^{new}$ into following equation:
+$$
+\begin{aligned}
+	\mathbf{v}_i^{new}
+	&= \mathbf{v}^{new} + \mathbf{\omega}^{new} \times \mathbf{R}\mathbf{r}_i \\
+	&= \mathbf{v} + \frac{1}{M}\mathbf{j} + (\mathbf{\omega} + \mathbf{I}^{-1}(\mathbf{R}\mathbf{r}_i\times\mathbf{j})) \times \mathbf{R}\mathbf{r}_i \\
+	&= \mathbf{v}_i + \frac{1}{M}\mathbf{j} + (\mathbf{I}^{-1}(\mathbf{R}\mathbf{r}_i\times\mathbf{j})) \times \mathbf{R}\mathbf{r}_i \\
+	&= \mathbf{v}_i + \frac{1}{M}\mathbf{j} - (\mathbf{R}\mathbf{r}_i) \times (\mathbf{I}^{-1}(\mathbf{R}\mathbf{r}_i\times\mathbf{j}))
+\end{aligned}
+$$
+We convert the cross product $mathbf{r}\times$ into a matrix product $mathbf{r}*$ in the way shown in Fig.1.
+\begin{figure}
+\centering
+\includegraphics[height=2cm,width=8cm]{cross_matrix.png}
+\caption{convertion of cross product to matrix product}
+\end{figure}
+Then we can convert the above equation to the following:
+$$\mathbf{v}_i^{new} = \mathbf{v}_i + \frac{1}{M}\mathbf{j} - (\mathbf{R}\mathbf{r}_i)* \mathbf{I}^{-1} (\mathbf{R}\mathbf{r}_i)* \mathbf{j}$$
+So we can get:
+$$\mathbf{v}_i^{new} - \mathbf{v}_i = \mathbf{K} \mathbf{j}$$
+where
+$$\mathbf{K} \leftarrow \frac{1}{M}\mathbf{1} - (\mathbf{R}\mathbf{r}_i)* \mathbf{I}^{-1} (\mathbf{R}\mathbf{r}_i)*$$
+Now we can get the impulse $\mathbf{j}$:
+$$\mathbf{j} \leftarrow \mathbf{K}^{-1} (\mathbf{v}_i^{new} - \mathbf{v}_i)$$
+
+\textbf{Step 4: Update $\mathbf{v}$ and $\mathbf{\omega}$} \\
+Lastly, we need to use the impulse to update $\mathbf{v}$ and $\mathbf{\omega}$:
+$$\mathbf{v} \leftarrow \mathbf{v} + \frac{1}{M}\mathbf{j}$$
+$$\mathbf{\omega} \leftarrow \mathbf{\omega} + \mathbf{I}^{-1}(\mathbf{R}\mathbf{r}_i\times\mathbf{j})$$
+
+Now the collision response using impulse method has finished.
 
 \section{Results}
 
