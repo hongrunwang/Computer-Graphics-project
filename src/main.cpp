@@ -107,6 +107,14 @@ int main() {
 			spheres[i][j]->color = { one, Float(0.75), zero };
 		}
 	}
+	std::shared_ptr<Mesh> mesh = std::make_shared<Sphere>();
+	mesh->ApplyTransform(
+		Transform(Vec3(-3.5, 4, 0.3),
+		Quat(1, 0, 0, 0),
+		Vec3(1, 1, 1))
+	);
+	mesh->BufferMeshVertices();
+	scene.AddObject(mesh, Shader::shader_phong)->color = { one, Float(0.75), zero };
 
     // loop until the user closes the window
     Input::Start(window);
