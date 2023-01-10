@@ -14,6 +14,7 @@ public:
 		this->Mesh::ApplyTransform(transform);
 		center=transform.TransformPoint(center);
 		normal=transform.RotationMat()*normal;
+		// printf("normal=(%f,%f,%f)\n",normal.x,normal.y,normal.z);
 	}
 	virtual Float sdf(Interaction &interaction){
 		interaction.dis=glm::dot(interaction.position-center,normal);

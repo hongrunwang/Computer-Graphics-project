@@ -380,11 +380,14 @@ void Mesh::CollisionResponse(Interaction &interaction){
 		velocity=-velocity;
 		t=-t;
 	}
-  velocity=2*t*interaction.normal-velocity; // simply bounce
-	if (glm::length(velocity) < 1.0f)
-  {
-    velocity={0.0f, 0.0f, 0.0f};
-  }
+	velocity=2*t*interaction.normal-velocity; // simply bounce
+	ApplyTransform(Transform(-2*interaction.dis*interaction.normal,
+                             Quat(1, 0, 0, 0),
+                             Vec3(1, 1, 1)));
+	// if (glm::length(velocity) < 1.0f)
+	// {
+		// velocity={0.0f, 0.0f, 0.0f};
+	// }
 	return;
 
   //////////////////////////////////////////////////////////////////////////
