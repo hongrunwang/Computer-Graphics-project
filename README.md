@@ -1,7 +1,7 @@
 ## CS171.01 Final Project - Massive Rigid-Body Simulation
 
 Name: 丁弘毅 王鸿润 刘放勋
-Student ID: 2020533039 __ 2020533047
+Student ID: 2020533039 2020533102 2020533047
 
 **Please write your Chinese name and your student ID in this README.**
 

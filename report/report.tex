@@ -5,6 +5,10 @@
 \usepackage{listings}
 \usepackage{bm}
 \usepackage{amsmath}
+\let\liningnums\relax % to solve confliction between ctex and libertine
+\usepackage[scheme=plain]{ctex}
+\hypersetup{colorlinks}
+\geometry{headsep=8ex,bottom=6ex}
 
 \definecolor{blve}{rgb}{0.3372549 , 0.61176471, 0.83921569}
 \definecolor{gr33n}{rgb}{0.29019608, 0.7372549, 0.64705882}
@@ -20,29 +24,36 @@
 	classstyle = \bfseries\color{gr33n}, 
 	tabsize=2
 }
-\lstset{basicstyle=\ttfamily}
+\lstset{basicstyle=\ttfamily\footnotesize}
+\linespread{1.2}
+\renewcommand{\_}{\underline{\ }}
 
-% Title portion
-\title{Assignment 5:\\ {Animation with Cloth Simulation}} 
+\title{CS171.01 Final Project:\\ {Massive Rigid-Body Simulation}} 
 
-\author{Name:\quad YiHeng Wu  \\ student number:\ 2019533077
-\\email:\quad wuyh3@shanghaitech.edu.cn}
+\author{Name: 丁弘毅\ 王鸿润\ 刘放勋  \\ student ID:\ 2020533039 2020533102 2020533047
+\\email:\\ dinghy1@shanghaitech.edu.cn\\ wanghr@shanghaitech.edu.cn\\ liufx@shanghaitech.edu.cn}
 
-% Document starts
 \begin{document}
 \maketitle
 
-\vspace*{2 ex}
+\vspace*{2ex}
 
-\section{Introduction}
+\section{Introduction \& Workload}
+In this project, we are going to simulate massive rigid body. The workload can be divided mainly into three parts: transformation over time, collision detection and collision response. These parts are finished by 王鸿润, 丁弘毅 and 刘放勋 respectively.\\
+The whole pipeline is that in each fixed time interval, we simulate the whole scene for a certain number of times, including updating positions \& velocities and coping with collisions. In each single simulation, we first update the position, velocity and angular velocity of a rigid body according to its acceleration, induced by forces from gravity, collision and friction. Then we check whether there are two of the objects in the scene collide with each other, and if so, we get the collision position, the normal and the signed distance. At last, in the collision response, we tear the two objects apart, and change the velocity \& angular velocity of them according to physical formulas.\\
+Here are some useful links:
 \begin{itemize}
-\item ... has been down.
-\item ...
-\item ...
+\item \href{http://games-cn.org/games103/}{GAMES103 Lecture 3,4,9}
 \end{itemize}
+
 \section{Implementation Details}
 
+\subsection{Transform over time}
+
+\subsection{Collision Detection}
+
+\subsection{Collision Response}
+
 \section{Results}
-% pictures should be in
-\\
+
 \end{document}

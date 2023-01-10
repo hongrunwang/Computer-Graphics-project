@@ -347,7 +347,7 @@ bool Mesh::CollisionDetect(std::shared_ptr<Mesh> other, Interaction &interaction
 	for(int i=0;i<vertices.size();i++){
 		interaction.position=vertices[i].position;
 		if(other->sdf(interaction)<0){
-			printf("collision at (%f,%f,%f) with dis %f\n",interaction.position.x,interaction.position.y,interaction.position.z,interaction.dis);
+			printf("collision at (%f,%f,%f) with dis %f and normal (%f,%f,%f)\n",interaction.position.x,interaction.position.y,interaction.position.z,interaction.dis,interaction.normal.x,interaction.normal.y,interaction.normal.z);
 			return true;
 		}
 	}
