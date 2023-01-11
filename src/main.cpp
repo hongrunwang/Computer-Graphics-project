@@ -93,12 +93,12 @@ int main() {
     object_ground->color = { zero, Float(0.75), one };
     object_wall->color = { zero, Float(0.75), one };
 
-	std::shared_ptr<Object>spheres[5][5];
-	for(int i=0;i<5;i++){
-		for(int j=0;j<5;j++){
+	std::shared_ptr<Object>spheres[10][10];
+	for(int i=0;i<10;i++){
+		for(int j=0;j<10;j++){
 			std::shared_ptr<Mesh> mesh = std::make_shared<Sphere>();
 			mesh->ApplyTransform(
-				Transform(Vec3(3.2+1.2*i, 6, 1.2*j),
+				Transform(Vec3(3.2+1.5*i+(std::rand()%100-50)/50.0, 6+(std::rand()%100-50)/50.0, 1.5*j+(std::rand()%100-50)/50.0),
 				Quat(1, 0, 0, 0),
 				Vec3(1, 1, 1))
 			);
